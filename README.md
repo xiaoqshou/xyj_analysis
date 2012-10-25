@@ -1,4 +1,4 @@
-##ModuleExecutionDetector发出的signal
+##ModuleExecutionDetector插件发出的信号
 
 ###1.onModuleTransition
 * 所属类别：执行跟踪/os相关
@@ -52,3 +52,28 @@
 	* 其他插件：LibraryCallMonitor
 * 与其他signal的关系：
 	* 依赖于Interceptor（OSMonitor）发出的onModuleLoad信号
+
+##MemoryChecker插件发出的信号
+###1.onPreCheck
+* 所属类别：其他
+* 含义：在实际检查前发射此信号；给其他插件来进行更细致的检查的机会。
+* 产生此信号的函数：
+	* `MemoryChecker::onDataMemoryAccess()`
+* 产生时间点：
+	* 在`MemoryChecker::onModuleTransition()`中进行检测，如果下一个module存在则连接CorePlugin的onDataMemoryAccess信号，此信号触发`MemoryChecker::onDataMemoryAccess()`函数，函数内部在调用检查函数之前发射该信号
+* 对这些plugin有帮助：
+	* 需要做详细检查的个人插件
+* 与其他信号的关系：
+	* 依赖CorePlugin的onDataMemoryAccess信号
+
+###2.onPostCheck
+* 所属类别：其他
+* 含义：检查失败的时候，发射此信号
+* 产生此信号的函数：
+	* `MemoryChecker::onDataMemoryAccess()`
+* 产生时间点：
+	* 在`MemoryChecker::onModuleTransition()`中进行检测，如果下一个module存在则连接CorePlugin的onDataMemoryAccess信号，此信号触发`MemoryChecker::onDataMemoryAccess()`函数，函数内部在调用检查函数之后判断result是否得到；若失败，则发射该信号
+* 对这些plugin有帮助：
+	* 需要做详细检查的个人插件
+* 与其他信号的关系：
+	* 依赖CorePlugin的onDataMemoryAccess信号
